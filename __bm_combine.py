@@ -19,7 +19,7 @@ from sklearn.manifold import MDS
 from streamlit.delta_generator import DeltaGenerator
 
 import defaults
-import styler
+from common import styler
 from common.multiline_chart import create_multiline_chart
 from data import get_conf, otp, data
 import streamlit as st

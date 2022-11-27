@@ -1,4 +1,7 @@
-streamlit
+streamlit=1.15.0
 pandas
 scikit-learn
 numpy
+watchdog
+streamlit-aggrid
+altair

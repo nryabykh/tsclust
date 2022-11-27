@@ -133,7 +133,8 @@ def draw_grid(
         update_mode=GridUpdateMode.SELECTION_CHANGED | GridUpdateMode.VALUE_CHANGED,
         allow_unsafe_jscode=True,
         fit_columns_on_grid_load=fit_columns,
-        height=min(min_height, (1 + len(df.index)) * 35),
-        theme=theme if theme is not None else get_current_streamlit_theme(),
+        height=min(min_height, (1 + len(df.index)) * 30),
+        # theme=theme if theme is not None else get_current_streamlit_theme(),
+        theme='balham',
         key=key
     )
