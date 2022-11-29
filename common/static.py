@@ -11,7 +11,6 @@ Another purpose of time series clustering is dimensionality reduction while fitt
 as model features, in some cases it would be better to reduce their number by combining similar series to the new 
 one. It will likely accelerate model fitting and prediction and helps to avoid overfitting. """
 
-
 upload_caption = """Please select the CSV file with time series. The application will try to do the following 
 automatically: 
 
@@ -22,3 +21,12 @@ automatically:
 
 The results of automatic extraction will be shown as default values in the widgets below. Please, change them to the 
 correct ones, if needed. """
+
+dbscan_help = """DBSCAN algorithm is used for clustering. You can change the '_epsilon_' parameter of DBSCAN with this 
+slider. You could consider '_epsilon_' as maximum allowed distance between the objects of the same cluster. Mutual 
+Pearson correlations subtracted from 1 are taken as distances between BMs. " "More details about DBSCAN you can find 
+there: https://scikit-learn.org/stable/modules/clustering.html#dbscan """
+
+default_eps = 0.1
+
+date_col = 'dt'

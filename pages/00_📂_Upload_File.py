@@ -36,4 +36,5 @@ def _reset_df():
         del st.session_state['clicked']
 
 
+st.set_page_config(layout='wide')
 run()

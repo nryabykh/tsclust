@@ -38,7 +38,7 @@ def run(df):
         if table_type == 'Long':
             variable_col = st.multiselect(
                 label='Column with variable names',
-                options=[c for c in df.columns if c != date_col]
+                options=sorted(set(c for c in df.columns if c != date_col))
             )
             value_col = st.selectbox(
                 label='Column with time series values',
@@ -62,7 +62,7 @@ def run(df):
     adjust_funcs.append(partial(adjust_resample, resample_freq, resample_func))
 
     btn = st.button('Apply', on_click=_set_clicked)
-    if btn or st.session_state.get('clicked', False):
+    if btn:
         for func in adjust_funcs:
             try:
                 df = func(df)
@@ -70,7 +70,10 @@ def run(df):
                 st.error(f'Cannot compete adjustment {func.func.__name__}. Skipped.')
                 with st.expander('Full exception message'):
                     st.exception(e)
-        _show(df)
+        st.session_state['df_clear'] = df
+
+    if st.session_state.get('clicked', False):
+        _show(st.session_state['df_clear'])
 
 
 def _show_preview(df):
@@ -105,6 +108,7 @@ def _set_clicked():
     st.session_state['clicked'] = True
 
 
+st.set_page_config(layout='wide')
 if 'df' in st.session_state:
     run(st.session_state['df'])
 else:
