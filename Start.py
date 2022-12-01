@@ -5,7 +5,7 @@ from version import __version__ as version
 
 st.set_page_config(
     page_title='TS Clustering',
-    layout='wide'
+    layout='centered'
 )
 
 custom_footer = f"""
