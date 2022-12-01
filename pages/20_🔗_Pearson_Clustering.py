@@ -3,12 +3,11 @@ import streamlit as st
 from pandas import DataFrame
 from streamlit.delta_generator import DeltaGenerator
 
-from common import styler, example
-from common.static import dbscan_help, date_col, projection_caption
+from common import example
+from common.static import dbscan_eps_help, projection_caption, default_eps, default_min_samples, dbscan_min_samples_help
 from pages.simple_clustering.algo import PearsonClustering
 from pages.simple_clustering.buttons import set_btn_clicked
 from pages.simple_clustering.options import DataOptions
-from awesome_table import AwesomeTable
 
 
 def run(df):
@@ -24,7 +23,7 @@ def run(df):
     cols = options.series
     df = df[df.index >= options.date.strftime('%Y-%m-%d')][cols]
     pc = PearsonClustering(df)
-    clusters = pc.get_clusters(eps=options.eps)
+    clusters = pc.get_clusters(eps=options.eps, min_samples=options.min_samples)
     df_mds = pc.get_mds(labels=clusters.labels)
 
     if ("actions" not in st.session_state) or (not st.session_state["actions"]):
@@ -52,7 +51,7 @@ def run(df):
 
 def _get_options(df: DataFrame) -> DataOptions:
     metrics_cols = list(df.columns)
-    col_series, col_date, col_slider = st.columns((3, 1, 1))
+    col_series, _, col_date, _, col_slider = st.columns((3, 0.1, 0.8, 0.1, 1))
 
     bm_selected = col_series.multiselect(
         label='Select series',
@@ -67,15 +66,23 @@ def _get_options(df: DataFrame) -> DataOptions:
     )
 
     selected_eps = col_slider.slider(
-        label='Number of clusters adjustment',
+        label='Maximum distance between points in cluster',
         min_value=0.1,
         max_value=1.0,
-        value=0.3,
+        value=default_eps,
         step=0.05,
-        help=dbscan_help
+        help=dbscan_eps_help
     )
 
-    return DataOptions(date=selected_start_date, eps=selected_eps, series=bm_selected)
+    selected_min_samples = col_slider.number_input(
+        label='Minimum number of samples in cluster',
+        min_value=1,
+        value=default_min_samples,
+        step=1,
+        help=dbscan_min_samples_help
+    )
+
+    return DataOptions(date=selected_start_date, eps=selected_eps, min_samples=selected_min_samples, series=bm_selected)
 
 
 def render_cluster_table(df_clusters: DataFrame, place: DeltaGenerator) -> dict:
@@ -101,20 +108,28 @@ def render_clusters_plot(df_mds: DataFrame, place: DeltaGenerator) -> None:
         size=alt.value(100),
         tooltip=["name"]
     )
+    text = alt.Chart(df_mds).mark_text(dx=5, dy=-10, color='#ffffff').encode(
+        x=alt.X("x:Q"),
+        y=alt.Y('y:Q'),
+        detail='cluster:N',
+        text='name',
+        tooltip=alt.value(None)
+    )
     place.altair_chart(chart, use_container_width=True)
 
 
 def render_cluster_chart(df: DataFrame, df_clusters: DataFrame, place: DeltaGenerator) -> None:
     place.markdown("#### Time series of the selected cluster")
     place.caption("Here you can check the similarity of the time series from the same cluster visually.")
-    labels = df_clusters.set_index('label')['variable'].to_dict()
+    labels_dict = df_clusters.set_index('label')['variable'].to_dict()
+    labels = list(labels_dict.keys())
     cluster_label = place.radio(
         label='Select cluster to investigate',
-        options=list(labels.keys()),
-        index=0 if min(labels.keys()) == 0 else 1,
+        options=labels,
+        index=0 if min(labels) == 0 or len(labels) == 1 else 1,
         horizontal=True
     )
-    cluster_series = labels.get(cluster_label, [])
+    cluster_series = labels_dict.get(cluster_label, [])
     filtered_df = df[cluster_series]
 
     chart = (

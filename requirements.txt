@@ -5,3 +5,5 @@ numpy
 watchdog
 streamlit-aggrid
 altair
+streamlit-awesome-table
+millify

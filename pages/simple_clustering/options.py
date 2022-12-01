@@ -7,4 +7,5 @@ from typing import List
 class DataOptions:
     date: date
     eps: float
+    min_samples: int
     series: List[str]

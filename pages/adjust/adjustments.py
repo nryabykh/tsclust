@@ -14,8 +14,8 @@ def adjust_datetime(col_name: str, date_format: str, df: DataFrame):
 
 
 def adjust_long(variable_col: list[str], value_col: str, date_col: str, df: DataFrame):
-    df["variable"] = ""
-    df["variable"] = df["variable"].str.cat(df[variable_col], sep="-")
+    df['variable'] = df[variable_col[0]]
+    df["variable"] = df["variable"].str.cat(df[variable_col[1:]], sep="-")
     time_col = 'dt' if 'dt' in df.columns else date_col
     return df.pivot(index=time_col, columns="variable", values=value_col).reset_index()
 

@@ -22,11 +22,23 @@ automatically:
 The results of automatic extraction will be shown as default values in the widgets below. Please, change them to the 
 correct ones, if needed. """
 
-dbscan_help = """DBSCAN algorithm is used for clustering. You can change the '_epsilon_' parameter of DBSCAN with this 
-slider. You could consider '_epsilon_' as maximum allowed distance between the objects of the same cluster. Mutual 
-Pearson correlations subtracted from 1 are taken as distances between BMs. " "More details about DBSCAN you can find 
-there: https://scikit-learn.org/stable/modules/clustering.html#dbscan """
+dbscan_eps_help = """DBSCAN algorithm is used for clustering. You can change the '_epsilon_' parameter of DBSCAN with 
+this slider. You could consider '_epsilon_' as maximum allowed distance between the objects of the same cluster. 
+Mutual Pearson correlations subtracted from 1 are taken as distances between time series. More details about DBSCAN 
+you can find there: https://scikit-learn.org/stable/modules/clustering.html#dbscan """
 
-default_eps = 0.1
+dbscan_min_samples_help = """DBSCAN algorithm is used for clustering. You can change the '_min_samples_' parameter of 
+DBSCAN with this slider. You could consider _min_samples_ as a minimum required number of samples in cluster. If 
+some samples are close together (mutual distances are less than _epsilon_), but their number is less than 
+_min_samples_, these points won't be clustered. More details about DBSCAN you can find there: 
+https://scikit-learn.org/stable/modules/clustering.html#dbscan """
+
+projection_caption = """Each point on the plane represents the single time series. Coordinates of points are calculated 
+using the MDS (multidimensional scaling) algorithm. This algorithms projects objects to the plane keeping 
+specified distances between objects. Mutual Pearson correlations subtracted from 1 are taken as distances between 
+time series. This scatter plot helps estimating appropriate number of clusters."""
+
+default_eps = 0.3
+default_min_samples = 3
 
 date_col = 'dt'

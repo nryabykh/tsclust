@@ -7,7 +7,7 @@ from pandas import DataFrame
 from sklearn.cluster import DBSCAN
 from sklearn.manifold import MDS
 
-from common.static import default_eps
+from common.static import default_eps, default_min_samples
 
 
 @dataclass
@@ -60,9 +60,8 @@ class PearsonClustering:
 
     def get_clusters(self, **kwargs) -> ClusteringResult:
         eps = kwargs.get('eps', default_eps)
-        st.write(self.get_correlations())
-        st.write(self.df_dist)
-        dbscan = DBSCAN(eps=eps, min_samples=3, metric='precomputed').fit(self.df_dist)
+        min_samples = kwargs.get('min_samples', default_min_samples)
+        dbscan = DBSCAN(eps=eps, min_samples=min_samples, metric='precomputed').fit(self.df_dist)
         labels = dbscan.labels_
         df_clusters = (
             self.df_dist
