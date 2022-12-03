@@ -104,6 +104,7 @@ def _apply_adjustments(df: DataFrame, adjust_funcs: list[partial]) -> DataFrame:
 
 def _show():
     st.markdown("#### Resulting dataset")
+    st.caption("Check the result of adjustment")
 
     tab_chart, tab_dataset, tab_init = st.tabs(['Result: Chart', 'Result: Table', 'Uploaded dataset'])
 

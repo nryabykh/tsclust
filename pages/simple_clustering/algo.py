@@ -18,18 +18,19 @@ class ClusteringResult:
     def set_actions(self) -> None:
         for label in self.labels:
             func, new_name = (
-                (ClusterTransformAction.SUM, f"sum_cl_{label}")
+                (ClusterTransformAction.SUM, f"Sum_of_cluster_{label}")
                 if label != -1
                 else (ClusterTransformAction.KEEP, "")
             )
-            st.session_state["actions"][label] = ClusterTransform(label, func, new_name)
+            st.session_state["actions"][label] = ClusterTransform(label, func, new_name, viewed=False)
 
 
 class ClusterTransformAction(str, Enum):
-    SUM = "sum"
-    MEAN = "mean"
-    KEEP = "keep original"
-    ONE = "select one"
+    SUM = "Sum of"
+    MEAN = "Average of"
+    KEEP = "Keep all originals"
+    ONE = "Select only one"
+    DROP = "Drop all"
 
 
 @dataclass
@@ -37,6 +38,7 @@ class ClusterTransform:
     cluster_label: int
     func: ClusterTransformAction
     new_name: str
+    viewed: bool
 
 
 class PearsonClustering:
@@ -62,7 +64,7 @@ class PearsonClustering:
         eps = kwargs.get('eps', default_eps)
         min_samples = kwargs.get('min_samples', default_min_samples)
         dbscan = DBSCAN(eps=eps, min_samples=min_samples, metric='precomputed').fit(self.df_dist)
-        labels = dbscan.labels_
+        labels = [int(i) for i in dbscan.labels_]
         df_clusters = (
             self.df_dist
             .assign(label=labels)
@@ -71,7 +73,6 @@ class PearsonClustering:
             .apply(list)
             .reset_index()
         )
-
         if "actions" in st.session_state:
             del st.session_state["actions"]
 

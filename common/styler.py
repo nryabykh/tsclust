@@ -107,7 +107,8 @@ def draw_grid(
     min_height: int = MIN_TABLE_HEIGHT,
     wrap_text: bool = False,
     auto_height: bool = False,
-    key=None
+    key=None,
+    **kwargs
 ):
     if formatter is None:
         formatter = {}
@@ -116,6 +117,8 @@ def draw_grid(
         if formatter
         else df.columns
     )
+    code = """
+    """
     gb = GridOptionsBuilder.from_dataframe(df[cols])
     gb.configure_selection(selection_mode=selection, use_checkbox=use_checkbox)
     gb.configure_default_column(
@@ -123,17 +126,20 @@ def draw_grid(
         groupable=False, 
         editable=False,
         wrapText=wrap_text,
-        autoHeight=auto_height
+        # autoHeight=auto_height
+    )
+    gb.configure_grid_options(
+        rowHeight=kwargs.get("row_height", 50)
     )
     for latin_name, (rus_name, style_dict) in formatter.items():
         gb.configure_column(latin_name, header_name=rus_name, **style_dict)
     return AgGrid(
         df[cols],
         gridOptions=gb.build(),
-        update_mode=GridUpdateMode.SELECTION_CHANGED | GridUpdateMode.VALUE_CHANGED,
+        update_mode=GridUpdateMode.MODEL_CHANGED,
         allow_unsafe_jscode=True,
         fit_columns_on_grid_load=fit_columns,
-        height=min(min_height, (1 + len(df.index)) * 30),
+        # height=min(min_height, (1 + len(df.index)) * 30),
         # theme=theme if theme is not None else get_current_streamlit_theme(),
         theme='balham',
         key=key

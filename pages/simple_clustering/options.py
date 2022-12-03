@@ -8,4 +8,4 @@ class DataOptions:
     date: date
     eps: float
     min_samples: int
-    series: List[str]
+    excluded_series: List[str]
